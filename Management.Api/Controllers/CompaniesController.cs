@@ -2,10 +2,12 @@
 using Management.Application.UseCases.CompanyCase.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Management.Api.Controllers;
 
-[Route("api/[controller]/[action]")]
+[Authorize]
+[Route("api/[controller]")]
 [ApiController]
 public class CompaniesController : ControllerBase
 {
@@ -18,46 +20,82 @@ public class CompaniesController : ControllerBase
     [HttpGet]
     public async ValueTask<IActionResult> GetAll()
     {
-        var result = await _mediator.Send(new GetAllCompanyQuery());
-
-        return Ok(result);
+        try
+        {
+            var result = await _mediator.Send(new GetAllCompanyQuery());
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal server error occurred");
+        }
     }
 
-    [HttpGet("id")]
+    [HttpGet("{id}")]
     public async ValueTask<IActionResult> GetById(int id)
     {
-        var result = await _mediator.Send(new GetByIdCompanyQuery
+        try
         {
-            Id = id
-        });
-
-        return Ok(result);
+            var result = await _mediator.Send(new GetByIdCompanyQuery { Id = id });
+            if (result == null)
+                return NotFound($"Company with ID {id} not found");
+                
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal server error occurred");
+        }
     }
 
     [HttpPost]
-    public async ValueTask<IActionResult> Create(CreateCompanyCommand company)
+    public async ValueTask<IActionResult> Create([FromBody] CreateCompanyCommand company)
     {
-        var result = await _mediator.Send(company);
-
-        return Ok(result);
-    }
-
-    [HttpPut]
-    public async ValueTask<IActionResult> Update(UpdateCompanyCommand company)
-    {
-        var result = await _mediator.Send(company);
-
-        return Ok(result);
-    }
-
-    [HttpDelete]
-    public async ValueTask<IActionResult> Delete(int Id)
-    {
-        var result = await _mediator.Send(new DeleteCompanyCommand
+        try
         {
-            Id = Id
-        });
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-        return Ok(result);
+            var result = await _mediator.Send(company);
+            return StatusCode(201, result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal server error occurred");
+        }
+    }
+
+    [HttpPut("{id}")]
+    public async ValueTask<IActionResult> Update(int id, [FromBody] UpdateCompanyCommand company)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (id != company.Id)
+                return BadRequest("ID mismatch");
+
+            var result = await _mediator.Send(company);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal server error occurred");
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async ValueTask<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _mediator.Send(new DeleteCompanyCommand { Id = id });
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal server error occurred");
+        }
     }
 }
