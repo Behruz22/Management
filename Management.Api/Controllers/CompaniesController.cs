@@ -16,7 +16,7 @@ public class CompaniesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GettAll()
+    public async ValueTask<IActionResult> GetAll()
     {
         var result = await _mediator.Send(new GetAllCompanyQuery());
 
@@ -24,11 +24,11 @@ public class CompaniesController : ControllerBase
     }
 
     [HttpGet("id")]
-    public async ValueTask<IActionResult> GetById(int Id)
+    public async ValueTask<IActionResult> GetById(int id)
     {
         var result = await _mediator.Send(new GetByIdCompanyQuery
         {
-            Id = Id
+            Id = id
         });
 
         return Ok(result);
