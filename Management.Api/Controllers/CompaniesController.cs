@@ -23,7 +23,7 @@ public class CompaniesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("id")]
+    [HttpGet("{id}")]
     public async ValueTask<IActionResult> GetById(int id)
     {
         var result = await _mediator.Send(new GetByIdCompanyQuery
