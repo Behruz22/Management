@@ -8,7 +8,13 @@ namespace Mangement.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options){ }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+        #if DEBUG
+            // migrate
+        #endif
+            Database.Migrate();
+    }
     public DbSet<User> Users { get ; set ; }
     public DbSet<Company> Companies { get ; set ; }
     public DbSet<Employee> Employees { get ; set ; }
