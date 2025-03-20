@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Management.Application.UseCases.CompanyCase.Handlers.QueriesHandler;
 
-public class GetByIdCompanyHandler : IRequestHandler<GetByIdCompanyQuery, CompanyDto>
+public class GetByIdCompanyHandler(IApplicationDbContext _context) : IRequestHandler<GetByIdCompanyQuery, CompanyDto>
 {
-    private readonly IApplicationDbContext _context;
-
-    public GetByIdCompanyHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<CompanyDto> Handle(GetByIdCompanyQuery request, CancellationToken cancellationToken)
     {
         var company = await _context.Companies.AsNoTracking().FirstOrDefaultAsync(c => c.Id == request.Id);

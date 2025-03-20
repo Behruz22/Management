@@ -8,14 +8,8 @@ namespace Management.Api.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController(IMediator _mediator): ControllerBase
     {
-        private readonly IMediator _mediator;
-        public UsersController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet]
         public async ValueTask<IActionResult> GettAll()
         {

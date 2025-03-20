@@ -5,15 +5,8 @@ using MediatR;
 
 namespace Management.Application.UseCases.CompanyCase.Handlers.CommandsHandler;
 
-public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand,bool>
+public class CreateCompanyHandler(IApplicationDbContext _context) : IRequestHandler<CreateCompanyCommand,bool>
 {
-    private readonly IApplicationDbContext _context;
-
-    public CreateCompanyHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<bool> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
         var company = new Company

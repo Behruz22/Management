@@ -6,15 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Management.Application.UseCases.CompanyCase.Handlers.QueriesHandler;
 
-public class GetAllCompanyHandler : IRequestHandler<GetAllCompanyQuery, IQueryable<CompanyDto>>
+public class GetAllCompanyHandler(IApplicationDbContext _context) : IRequestHandler<GetAllCompanyQuery, IQueryable<CompanyDto>>
 {
-    private readonly IApplicationDbContext _context;
-
-    public GetAllCompanyHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<IQueryable<CompanyDto>> Handle(GetAllCompanyQuery request, CancellationToken cancellationToken)
     {
         var companies = _context.Companies.AsNoTracking().Select(c => new CompanyDto

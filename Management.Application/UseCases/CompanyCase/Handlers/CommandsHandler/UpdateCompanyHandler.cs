@@ -4,16 +4,8 @@ using MediatR;
 
 namespace Management.Application.UseCases.CompanyCase.Handlers.CommandsHandler;
 
-public class UpdateCompanyHandler : IRequestHandler<UpdateCompanyCommand, bool>
+public class UpdateCompanyHandler(IApplicationDbContext _context) : IRequestHandler<UpdateCompanyCommand, bool>
 {
-    private readonly IApplicationDbContext _context;
-
-    public UpdateCompanyHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-
     public async Task<bool> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
     {
         var company = _context.Companies.FirstOrDefault(c => c.Id == request.Id);
